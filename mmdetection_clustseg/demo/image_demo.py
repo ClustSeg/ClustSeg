@@ -1,6 +1,7 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import asyncio
 from argparse import ArgumentParser
+import os
 
 from mmdet.apis import (async_inference_detector, inference_detector,
                         init_detector, show_result_pyplot)
@@ -32,16 +33,31 @@ def parse_args():
 def main(args):
     # build the model from a config file and a checkpoint file
     model = init_detector(args.config, args.checkpoint, device=args.device)
-    # test a single image
-    result = inference_detector(model, args.img)
-    # show the results
-    show_result_pyplot(
+
+
+    for filename in os.listdir("../data/coco/val"):
+    #     print(filename)
+        args.img="../data/coco/val/"+str(filename)
+        result = inference_detector(model, args.img)
+        show_result_pyplot(
         model,
         args.img,
         result,
         palette=args.palette,
         score_thr=args.score_thr,
-        out_file=args.out_file)
+        out_file='result/{}_{}.jpg'.format(args.img[-16:-4],args.suffix))  
+    
+    
+    # # test a single image
+    # result = inference_detector(model, args.img)
+    # # show the results
+    # show_result_pyplot(
+    #     model,
+    #     args.img,
+    #     result,
+    #     palette=args.palette,
+    #     score_thr=args.score_thr,
+    #     out_file=args.out_file)
 
 
 async def async_main(args):
